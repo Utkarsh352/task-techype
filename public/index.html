@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f7fc;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .success {
+      color: green;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Authentication Demo</h2>
+    
+    <!-- Register Form -->
+    <div id="register-form" class="form">
+      <h3>Register</h3>
+      <div class="input-group">
+        <input type="text" id="register-username" placeholder="Username" />
+      </div>
+      <div class="input-group">
+        <input type="email" id="register-email" placeholder="Email" />
+      </div>
+      <div class="input-group">
+        <input type="password" id="register-password" placeholder="Password" />
+      </div>
+      <button onclick="registerUser()">Register</button>
+      <p class="error" id="register-error"></p>
+      <p class="success" id="register-success"></p>
+    </div>
+
+    <hr>
+
+    <!-- Login Form -->
+    <div id="login-form" class="form">
+      <h3>Login</h3>
+      <div class="input-group">
+        <input type="email" id="login-email" placeholder="Email" />
+      </div>
+      <div class="input-group">
+        <input type="password" id="login-password" placeholder="Password" />
+      </div>
+      <button onclick="loginUser()">Login</button>
+      <p class="error" id="login-error"></p>
+      <p class="success" id="login-success"></p>
+    </div>
+
+    <hr>
+
+    <!-- Google Login -->
+    <button onclick="googleLogin()">Login with Google</button>
+    <p class="error" id="google-error"></p>
+    <p class="success" id="google-success"></p>
+
+    <!-- LinkedIn Login -->
+    <button onclick="linkedinLogin()">Login with LinkedIn</button>
+    <p class="error" id="linkedin-error"></p>
+    <p class="success" id="linkedin-success"></p>
+  </div>
+
+  <script>
+    const apiUrl = "http://localhost:3000"; 
+
+    async function googleLogin() {
+      window.location.href = `${apiUrl}/auth/google`; // Redirect to Google OAuth route
+    }
+
+    async function linkedinLogin() {
+      window.location.href = `${apiUrl}/auth/linkedin`; // Redirect to LinkedIn OAuth route
+    }
+
+    async function registerUser() {
+      const username = document.getElementById("register-username").value;
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+      
+      const registerData = {
+        username,
+        email,
+        password,
+        provider, 
+      };
+      
+      try {
+        const response = await fetch(`${apiUrl}/auth/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registerData),
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          document.getElementById("register-error").textContent = '';
+          document.getElementById("register-success").textContent = "User registered successfully!";
+        } else {
+          document.getElementById("register-error").textContent = data.message || "Registration failed.";
+        }
+      } catch (error) {
+        document.getElementById("register-error").textContent = "An error occurred.";
+      }
+    }
+
+    async function loginUser() {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+      
+      const loginData = {
+        email,
+        password,
+      };
+
+      try {
+        const response = await fetch(`${apiUrl}/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginData),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById("login-error").textContent = '';
+          document.getElementById("login-success").textContent = `Login successful! Token: ${data.access_token}`;
+        } else {
+          document.getElementById("login-error").textContent = data.message || "Login failed.";
+        }
+      } catch (error) {
+        document.getElementById("login-error").textContent = "An error occurred.";
+      }
+    }
+  </script>
+</body>
+</html>
