@@ -1,4 +1,3 @@
-
 # NestJS Social Auth API
 
 This project implements a user authentication system with social login capabilities using Google and LinkedIn via the NestJS framework. The API allows users to register, log in, and authenticate using their Google or LinkedIn accounts. The backend uses JWT for token-based authentication and PostgreSQL for data storage.
